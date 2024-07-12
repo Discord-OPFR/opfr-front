@@ -1,0 +1,25 @@
+on:
+  push:
+    branches:
+      - main
+    tags-ignore:
+      - '**'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+        with:
+          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: fetch tags
+        run: git fetch --tags origin  --unshallow
+      - name: config
+        run: |
+          git config --global user.email "matthieu.veiga@epitech.eu"
+          git config --global user.name "matthieu_veiga"
+      - name: release
+        run: chmod +x ./scripts/release.sh && ./scripts/release.sh
+      - name: push
+        run: git push --follow-tags origin main
+
